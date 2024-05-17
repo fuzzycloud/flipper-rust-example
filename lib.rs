@@ -1,18 +1,18 @@
 #![cfg_attr(not(feature = "std"), no_std, no_main)]
 
 #[ink::contract]
-mod abc {
+mod flipper {
 
     /// Defines the storage of your contract.
     /// Add new fields to the below struct in order
     /// to add new static storage fields to your contract.
     #[ink(storage)]
-    pub struct Abc {
+    pub struct Flipper {
         /// Stores a single `bool` value on the storage.
         value: bool,
     }
 
-    impl Abc {
+    impl Flipper {
         /// Constructor that initializes the `bool` value to the given `init_value`.
         #[ink(constructor)]
         pub fn new(init_value: bool) -> Self {
@@ -53,20 +53,19 @@ mod abc {
         /// We test if the default constructor does its job.
         #[ink::test]
         fn default_works() {
-            let abc = Abc::default();
-            assert_eq!(abc.get(), false);
+            let flipper = flipper::default();
+            assert_eq!(flipper.get(), false);
         }
 
         /// We test a simple use case of our contract.
         #[ink::test]
         fn it_works() {
-            let mut abc = Abc::new(false);
-            assert_eq!(abc.get(), false);
-            abc.flip();
-            assert_eq!(abc.get(), true);
+            let mut flipper = flipper::new(false);
+            assert_eq!(flipper.get(), false);
+            flipper.flip();
+            assert_eq!(flipper.get(), true);
         }
     }
-
 
     /// This is how you'd write end-to-end (E2E) or integration tests for ink! contracts.
     ///
@@ -88,15 +87,15 @@ mod abc {
         #[ink_e2e::test]
         async fn default_works(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
             // Given
-            let mut constructor = AbcRef::default();
+            let mut constructor = flipperRef::default();
 
             // When
             let contract = client
-                .instantiate("abc", &ink_e2e::alice(), &mut constructor)
+                .instantiate("flipper", &ink_e2e::alice(), &mut constructor)
                 .submit()
                 .await
                 .expect("instantiate failed");
-            let call_builder = contract.call_builder::<Abc>();
+            let call_builder = contract.call_builder::<flipper>();
 
             // Then
             let get = call_builder.get();
@@ -110,13 +109,13 @@ mod abc {
         #[ink_e2e::test]
         async fn it_works(mut client: ink_e2e::Client<C, E>) -> E2EResult<()> {
             // Given
-            let mut constructor = AbcRef::new(false);
+            let mut constructor = flipperRef::new(false);
             let contract = client
-                .instantiate("abc", &ink_e2e::bob(), &mut constructor)
+                .instantiate("flipper", &ink_e2e::bob(), &mut constructor)
                 .submit()
                 .await
                 .expect("instantiate failed");
-            let mut call_builder = contract.call_builder::<Abc>();
+            let mut call_builder = contract.call_builder::<flipper>();
 
             let get = call_builder.get();
             let get_result = client.call(&ink_e2e::bob(), &get).dry_run().await?;
