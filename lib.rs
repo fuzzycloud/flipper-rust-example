@@ -53,14 +53,14 @@ mod flipper {
         /// We test if the default constructor does its job.
         #[ink::test]
         fn default_works() {
-            let flipper = flipper::default();
+            let flipper = Flipper::default();
             assert_eq!(flipper.get(), false);
         }
 
         /// We test a simple use case of our contract.
         #[ink::test]
         fn it_works() {
-            let mut flipper = flipper::new(false);
+            let mut flipper = Flipper::new(false);
             assert_eq!(flipper.get(), false);
             flipper.flip();
             assert_eq!(flipper.get(), true);
